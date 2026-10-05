@@ -1,0 +1,16 @@
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Editor artifacts
+.vscode/
+.idea/
+*.swp
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+.venv/
+
+# Teamwork agent metadata
+.agents/
