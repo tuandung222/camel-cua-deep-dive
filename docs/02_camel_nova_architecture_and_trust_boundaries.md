@@ -16,7 +16,7 @@ flowchart TD
         User["Người Dùng (User Instruction)"] -->|Chỉ thị nhiệm vụ U| PLLM["Privileged Planner (P-LLM)<br>(GPT-5 / Grok-4 / Claude)"]
         Scaffold["Hệ Tri Thức Khung Giàn<br>(Observe-Verify-Act Rules)"] --> PLLM
         ToolSchemas["Chữ Ký Công Cụ Hệ Thống<br>(NOVA Tool Specifications)"] --> PLLM
-        PLLM -->|Sinh Kế Hoạch Python AST<br>(Một lần duy nhất tại t=0)| PlanAST["Kế Hoạch Thực Thi AST<br>(Chứa Đầy Đủ Nhánh Dự Phòng)"]
+        PLLM -->|"Sinh Kế Hoạch Python AST<br>(Một lần duy nhất tại t=0)"| PlanAST["Kế Hoạch Thực Thi AST<br>(Chứa Đầy Đủ Nhánh Dự Phòng)"]
     end
 
     subgraph TCBInterpreter["VÙNG THÔNG DỊCH AN TOÀN (TCB INTERPRETER)"]
@@ -36,7 +36,7 @@ flowchart TD
         
         QVLM_Obs -->|Chuỗi quan sát| QLLM_Verify
         QLLM_Verify -->|Boolean: OK / FAIL| Interpreter
-        QVLM_Find -->|Tọa độ [x, y]| RedundancyCheck{"Tầng Thẩm Định<br>Dư Thừa"}
+        QVLM_Find -->|"Tọa độ [x, y]"| RedundancyCheck{"Tầng Thẩm Định<br>Dư Thừa"}
     end
 
     subgraph DefenseLayer["TẦNG THẨM ĐỊNH DƯ THỪA (DEFENSE VERIFIERS)"]
