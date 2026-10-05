@@ -1,0 +1,269 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "CaMeL-NOVA Execution Loop: Observe, Verify, Act",
+    "output": "visualizations/camel_cua_execution_loop.html",
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "happy-path",
+        "label": "Primary Execution Path",
+        "focus": ["fetch_step", "observe_screen", "verify_hypo", "eval_branch", "ground_target", "alignment_guard", "exec_action", "mark_done"],
+        "note": "Follow the primary NOVA loop from AST step dispatch to validated OS execution and goal completion."
+      },
+      {
+        "id": "verification-recovery",
+        "label": "Hypothesis Verification & Recovery",
+        "focus": ["verify_hypo", "eval_branch", "fallback_branch", "alignment_guard"],
+        "note": "When hypothesis check fails, the interpreter activates pre-compiled fallback branches without contacting P-LLM."
+      },
+      {
+        "id": "safety-guards",
+        "label": "Action Alignment & Terminal Guards",
+        "focus": ["ground_target", "alignment_guard", "abort_exit", "exec_action"],
+        "note": "Alignment guard blocks branch steering and malicious payloads before hardware dispatch."
+      }
+    ]
+  },
+  "lanes": [
+    { "id": "plan_tcb", "label": "Plan Interpreter (TCB)" },
+    { "id": "quarantined", "label": "Quarantined Perception" },
+    { "id": "safety_policy", "label": "Verification & Fallback", "variant": "exception" },
+    { "id": "os_runtime", "label": "OS Sandbox Runtime" }
+  ],
+  "phases": [
+    { "id": "intake", "label": "Phase 1: Observation", "fromCol": 0, "toCol": 1 },
+    { "id": "verification", "label": "Phase 2: Hypothesis & Branching", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "execution", "label": "Phase 3: Grounding & Action", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "groups": [
+    { "id": "obs_group", "label": "Perception Intake", "lane": "quarantined", "fromCol": 1, "toCol": 2 },
+    { "id": "guard_group", "label": "Safety & Policy", "lane": "safety_policy", "fromCol": 3, "toCol": 4, "variant": "security" },
+    { "id": "exec_group", "label": "Execution & Result", "lane": "os_runtime", "fromCol": 4, "toCol": 5, "variant": "emphasis" }
+  ],
+  "mainPath": [
+    "fetch_step",
+    "observe_screen",
+    "verify_hypo",
+    "eval_branch",
+    "ground_target",
+    "alignment_guard",
+    "exec_action",
+    "mark_done"
+  ],
+  "nodes": [
+    {
+      "id": "fetch_step",
+      "lane": "plan_tcb",
+      "col": 0,
+      "type": "backend",
+      "label": "Fetch AST Step",
+      "sublabel": "Next Plan Node",
+      "tag": "CFI Lock",
+      "width": 136,
+      "height": 52
+    },
+    {
+      "id": "observe_screen",
+      "lane": "quarantined",
+      "col": 1,
+      "type": "frontend",
+      "label": "Observe UI",
+      "sublabel": "summarize_screenshot()",
+      "tag": "Screen & DOM",
+      "width": 136,
+      "height": 52
+    },
+    {
+      "id": "verify_hypo",
+      "lane": "quarantined",
+      "col": 2,
+      "type": "backend",
+      "label": "Verify Hypothesis",
+      "sublabel": "verify_hypothesis()",
+      "tag": "Boolean Check",
+      "width": 136,
+      "height": 52
+    },
+    {
+      "id": "eval_branch",
+      "lane": "plan_tcb",
+      "col": 3,
+      "type": "security",
+      "label": "Branch Guard",
+      "sublabel": "if status == 'OK'",
+      "tag": "Condition",
+      "width": 136,
+      "height": 52
+    },
+    {
+      "id": "fallback_branch",
+      "lane": "safety_policy",
+      "col": 3,
+      "type": "messagebus",
+      "label": "Fallback Branch",
+      "sublabel": "Pre-compiled Recovery",
+      "tag": "no_op / Retry",
+      "width": 136,
+      "height": 52
+    },
+    {
+      "id": "ground_target",
+      "lane": "quarantined",
+      "col": 4,
+      "type": "frontend",
+      "label": "Ground Target",
+      "sublabel": "find([x, y]) / DOM",
+      "tag": "Pixel Coord",
+      "width": 136,
+      "height": 52
+    },
+    {
+      "id": "alignment_guard",
+      "lane": "safety_policy",
+      "col": 4,
+      "type": "security",
+      "label": "Alignment Guard",
+      "sublabel": "Thought vs Prompt",
+      "tag": "Anti-Steering",
+      "width": 136,
+      "height": 52
+    },
+    {
+      "id": "exec_action",
+      "lane": "os_runtime",
+      "col": 5,
+      "type": "external",
+      "label": "OS Execution",
+      "sublabel": "left_single / type_text",
+      "tag": "pyautogui",
+      "width": 136,
+      "height": 52
+    },
+    {
+      "id": "mark_done",
+      "lane": "plan_tcb",
+      "col": 5,
+      "type": "backend",
+      "label": "Task Complete",
+      "sublabel": "mark_done()",
+      "tag": "Success Exit",
+      "width": 136,
+      "height": 52
+    },
+    {
+      "id": "abort_exit",
+      "lane": "safety_policy",
+      "col": 5,
+      "type": "security",
+      "label": "Abort / Terminate",
+      "sublabel": "mark_fail()",
+      "tag": "Violation Stop",
+      "width": 136,
+      "height": 52
+    }
+  ],
+  "edges": [
+    {
+      "id": "fetch-to-obs",
+      "from": "fetch_step",
+      "to": "observe_screen",
+      "label": "dispatch query",
+      "variant": "default"
+    },
+    {
+      "id": "obs-to-verify",
+      "from": "observe_screen",
+      "to": "verify_hypo",
+      "label": "summary text",
+      "variant": "default"
+    },
+    {
+      "id": "verify-to-eval",
+      "from": "verify_hypo",
+      "to": "eval_branch",
+      "label": "status OK / FAIL",
+      "variant": "security"
+    },
+    {
+      "id": "eval-to-ground",
+      "from": "eval_branch",
+      "to": "ground_target",
+      "label": "status == OK",
+      "variant": "emphasis",
+      "role": "main"
+    },
+    {
+      "id": "eval-to-fallback",
+      "from": "eval_branch",
+      "to": "fallback_branch",
+      "label": "status != OK",
+      "variant": "security",
+      "role": "branch"
+    },
+    {
+      "id": "ground-to-align",
+      "from": "ground_target",
+      "to": "alignment_guard",
+      "label": "target coords",
+      "variant": "default"
+    },
+    {
+      "id": "fallback-to-align",
+      "from": "fallback_branch",
+      "to": "alignment_guard",
+      "label": "fallback action",
+      "variant": "dashed",
+      "role": "branch"
+    },
+    {
+      "id": "align-to-exec",
+      "from": "alignment_guard",
+      "to": "exec_action",
+      "label": "action approved",
+      "variant": "emphasis",
+      "role": "main"
+    },
+    {
+      "id": "align-to-abort",
+      "from": "alignment_guard",
+      "to": "abort_exit",
+      "label": "steering detected",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "exec-to-done",
+      "from": "exec_action",
+      "to": "mark_done",
+      "label": "check_done()",
+      "variant": "emphasis",
+      "role": "return",
+      "fromSide": "right",
+      "toSide": "right",
+      "route": "outside-right",
+      "channelX": 1160,
+      "labelAt": [1160, 310]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Single-Shot Plan Scaffolding",
+      "items": [
+        "P-LLM compiles an upfront branching DAG containing all contingency nodes",
+        "Deterministic Interpreter steps through AST nodes under strict CFI guarantees"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Semantic Hypothesis & Alignment",
+      "items": [
+        "verify_hypothesis evaluates typed booleans against isolated observations",
+        "Alignment Guard validates thought trace against user instruction before dispatch"
+      ]
+    }
+  ]
+}

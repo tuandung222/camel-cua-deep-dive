@@ -1,0 +1,303 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "CaMeL-CUA System Architecture & Trust Boundaries",
+    "output": "visualizations/camel_cua_system_architecture.html",
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "viewBox": [1320, 520],
+    "views": [
+      {
+        "id": "trusted-planning",
+        "label": "Trusted Planning Pipeline",
+        "focus": ["user", "planner", "ast_plan", "interpreter"],
+        "note": "User task prompt compiles into a static AST plan without exposing the planner to live screen pixels."
+      },
+      {
+        "id": "quarantined-perception",
+        "label": "Quarantined Perception & Verification",
+        "focus": ["interpreter", "q_vlm", "q_verify", "verifiers"],
+        "note": "Perception runs in an untrusted sandbox, returning bounded coordinates and boolean hypothesis checks."
+      },
+      {
+        "id": "os-execution-boundary",
+        "label": "OS Execution & Adversary Surface",
+        "focus": ["interpreter", "shim", "os_env", "attacker"],
+        "note": "Deterministic interpreter enforces CFI before dispatching validated actions to the host OS."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "user",
+      "type": "external",
+      "label": "User",
+      "sublabel": "Task Prompt U",
+      "pos": [40, 60],
+      "size": [140, 54],
+      "tag": "Trusted Origin"
+    },
+    {
+      "id": "planner",
+      "type": "security",
+      "label": "Privileged Planner",
+      "sublabel": "P-LLM (Zero-Vision)",
+      "pos": [40, 200],
+      "size": [140, 58],
+      "tag": "GPT-5 / Claude"
+    },
+    {
+      "id": "ast_plan",
+      "type": "backend",
+      "label": "Static AST Plan",
+      "sublabel": "Branching Python DAG",
+      "pos": [300, 200],
+      "size": [140, 58],
+      "tag": "NOVA Scaffolding"
+    },
+    {
+      "id": "interpreter",
+      "type": "security",
+      "label": "Plan Interpreter",
+      "sublabel": "TCB Sandbox Engine",
+      "pos": [580, 200],
+      "size": [140, 58],
+      "tag": "CFI Enforcement"
+    },
+    {
+      "id": "shim",
+      "type": "backend",
+      "label": "OS Execution Shim",
+      "sublabel": "Action Dispatcher",
+      "pos": [860, 200],
+      "size": [140, 58],
+      "tag": "pyautogui / CDP"
+    },
+    {
+      "id": "os_env",
+      "type": "external",
+      "label": "OS Environment",
+      "sublabel": "Ubuntu VM / Chrome",
+      "pos": [1140, 200],
+      "size": [140, 58],
+      "tag": "OSWorld Desktop"
+    },
+    {
+      "id": "attacker",
+      "type": "external",
+      "label": "Adversary Surface",
+      "sublabel": "VPI & Web Ads",
+      "pos": [1140, 60],
+      "size": [140, 54],
+      "tag": "Poisoned Pixels"
+    },
+    {
+      "id": "q_vlm",
+      "type": "frontend",
+      "label": "Quarantined VLM",
+      "sublabel": "UI-TARS / OpenCUA",
+      "pos": [300, 360],
+      "size": [140, 58],
+      "tag": "find() / summarize"
+    },
+    {
+      "id": "q_verify",
+      "type": "backend",
+      "label": "Hypothesis Verifier",
+      "sublabel": "Q-LLM Verifier",
+      "pos": [580, 360],
+      "size": [140, 58],
+      "tag": "verify_hypothesis"
+    },
+    {
+      "id": "verifiers",
+      "type": "security",
+      "label": "Redundancy Verifiers",
+      "sublabel": "DOM & Consensus",
+      "pos": [860, 360],
+      "size": [140, 58],
+      "tag": "Multi-Modal Audit"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Trusted Domain (Zero-Observation)",
+      "wraps": ["user", "planner", "ast_plan"],
+      "pad": 14
+    },
+    {
+      "kind": "security-group",
+      "label": "TCB Enforcement Boundary (CFI Sandbox)",
+      "wraps": ["interpreter", "shim"],
+      "pad": 14
+    },
+    {
+      "kind": "region",
+      "label": "Quarantined Perception Domain (Untrusted)",
+      "wraps": ["q_vlm", "q_verify", "verifiers"],
+      "pad": 14
+    },
+    {
+      "kind": "region",
+      "label": "Untrusted Host & Adversarial Surface",
+      "wraps": ["attacker", "os_env"],
+      "pad": 14
+    }
+  ],
+  "connections": [
+    {
+      "id": "user-to-planner",
+      "from": "user",
+      "to": "planner",
+      "label": "task prompt",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [110, 157]
+    },
+    {
+      "id": "planner-to-plan",
+      "from": "planner",
+      "to": "ast_plan",
+      "label": "compile AST",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelAt": [240, 229]
+    },
+    {
+      "id": "plan-to-interp",
+      "from": "ast_plan",
+      "to": "interpreter",
+      "label": "execute DAG",
+      "variant": "default",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelAt": [510, 229]
+    },
+    {
+      "id": "interp-to-shim",
+      "from": "interpreter",
+      "to": "shim",
+      "label": "valid actions",
+      "variant": "security",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelAt": [790, 229]
+    },
+    {
+      "id": "shim-to-os",
+      "from": "shim",
+      "to": "os_env",
+      "label": "click / type",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelAt": [1070, 229]
+    },
+    {
+      "id": "attacker-to-os",
+      "from": "attacker",
+      "to": "os_env",
+      "label": "VPI / poison",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [1210, 157]
+    },
+    {
+      "id": "interp-to-qvlm",
+      "from": "interpreter",
+      "to": "q_vlm",
+      "label": "find / observe",
+      "variant": "default",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "via": [[650, 300], [370, 300]],
+      "labelAt": [510, 285]
+    },
+    {
+      "id": "qvlm-to-qverify",
+      "from": "q_vlm",
+      "to": "q_verify",
+      "label": "observations",
+      "variant": "default",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelAt": [510, 389]
+    },
+    {
+      "id": "qverify-to-interp",
+      "from": "q_verify",
+      "to": "interpreter",
+      "label": "status OK / FAIL",
+      "variant": "security",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "labelAt": [650, 325]
+    },
+    {
+      "id": "qvlm-to-verifiers",
+      "from": "q_vlm",
+      "to": "verifiers",
+      "label": "proposed coords",
+      "variant": "default",
+      "fromSide": "bottom",
+      "toSide": "bottom",
+      "via": [[370, 450], [930, 450]],
+      "labelAt": [650, 450]
+    },
+    {
+      "id": "verifiers-to-shim",
+      "from": "verifiers",
+      "to": "shim",
+      "label": "consensus audit",
+      "variant": "security",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "labelAt": [930, 309]
+    },
+    {
+      "id": "os-to-qvlm",
+      "from": "os_env",
+      "to": "q_vlm",
+      "label": "screenshot / DOM",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "left",
+      "via": [[1210, 480], [240, 480], [240, 389]],
+      "labelAt": [725, 480]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Control Flow Integrity (CFI)",
+      "items": [
+        "P-LLM operates in a strictly trusted domain without live screen or DOM inputs",
+        "Single-shot AST plan is compiled upfront with exhaustive fallback branches",
+        "Deterministic Interpreter prevents arbitrary command injection (0.0% ASR)"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Quarantined Perception & Verification",
+      "items": [
+        "Q-VLM processes untrusted pixels and accessibility trees under sandbox isolation",
+        "verify_hypothesis outputs typed booleans (OK/FAIL) to guard branch execution",
+        "Redundancy verifiers cross-check DOM consistency and multi-modal consensus"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Physical OS Isolation",
+      "items": [
+        "OS Shim emits validated low-level mouse and keyboard primitives",
+        "State transitions are verified via post-action screenshot deltas",
+        "Host OS executes in an isolated sandbox VM (Ubuntu OSWorld)"
+      ]
+    }
+  ]
+}
