@@ -141,7 +141,9 @@ Tuy nhiên, khi gặp các tác vụ **phụ thuộc sâu vào dữ liệu thờ
 - P-LLM không thể biết trước cơ sở dữ liệu có thanh tìm kiếm hay không, kết quả trả về nằm ở trang nào, hay cấu trúc phân cấp danh mục tổ chức ra sao.
 - Để bao quát mọi khả năng, số lượng nhánh rẽ cần thiết sẽ bùng nổ theo hàm mũ:
 
-$$\mathcal{O}(b^d) \quad \text{với } b \text{ là hệ số phân nhánh, } d \text{ là độ sâu tương tác}$$
+$$
+\mathcal{O}(b^d) \quad \text{với } b \text{ là hệ số phân nhánh, } d \text{ là độ sâu tương tác}
+$$
 
 Điều này nhanh chóng làm tràn cửa sổ ngữ cảnh (Context Window) của các mô hình LLM hiện nay. Khi thiếu thông tin ban đầu, Planner có xu hướng sinh kế hoạch thoát ra trang tìm kiếm chung của Google thay vì tương tác sâu trong website mục tiêu.
 

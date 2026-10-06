@@ -113,7 +113,9 @@ Hệ thống CaMeL-NOVA phân rã toàn bộ quy trình vận hành thành 4 th�
 
 Nguyên lý thiết kế bất biến của CaMeL-NOVA được hình thức hóa bằng điều kiện triệt tiêu giao thoa thông tin giữa môi trường quan sát và bộ lập kế hoạch:
 
-$$\mathcal{I}_{\text{env}} \cap \text{Context}(\text{P-LLM}) = \emptyset$$
+$$
+\mathcal{I}_{\text{env}} \cap \text{Context}(\text{P-LLM}) = \emptyset
+$$
 
 Trong đó:
 - $\mathcal{I}_{\text{env}}$ đại diện cho toàn bộ tập dữ liệu bắt nguồn từ môi trường bên ngoài tại runtime (bao gồm ảnh chụp màn hình $I_t$, cây DOM $D_t$, văn bản trang web, và kết quả thô của các hàm trích xuất thị giác).
@@ -195,19 +197,19 @@ Trong nghiên cứu, nhóm tác giả hiện thực hóa nguyên lý Dual-LLM tr
 | **Nguy cơ rò rỉ kênh phụ** | Không có | Có nguy cơ (qua chuỗi câu hỏi nhị phân nếu không giới hạn) |
 | **Ràng buộc an ninh bắt buộc** | Không cần (kế hoạch đã đóng) | `max_steps=15, max_turn=70,`<br>`max_variable_reuse=5` |
 | **Tiêu thụ tài nguyên** | **1.88x Token** (Rất tiết kiệm) | **29.6x Token** (Bùng nổ nặng) |
-| **Chi phí API trên 17 tasks** | **$5.40** | **$76.07** (Đắt gấp 14 lần) |
+| **Chi phí API trên 17 tasks** | **5.40 USD** | **76.07 USD** (Đắt gấp 14 lần) |
 | **Tiện ích OSWorld (Pass@5)** | **65.0%** | **66.7%** (Tương đương nhau) |
 
 ### 5.1. CaMeL-NOVA: Lập Kế Hoạch Tĩnh Một Lượt (Single-Shot AST Planning)
 * **Cơ chế:** P-LLM suy luận toàn bộ cây khả năng và phát ra file mã nguồn Python hoàn chỉnh. Trình thông dịch (Interpreter) đóng vai trò người thi hành tuyệt đối trung thành.
 * **Ưu điểm vượt trội:**
   - **CFI tuyệt đối:** Kẻ tấn công hoàn toàn không có cách nào tương tác với P-LLM sau khi tác vụ bắt đầu.
-  - **Tối ưu chi phí:** Chỉ gọi P-LLM đúng một lần, lượng token tiêu thụ chỉ tăng $1.88\times$ so với tác tử không phòng thủ.
+  - **Tối ưu chi phí:** Chỉ gọi P-LLM đúng một lần, lượng token tiêu thụ chỉ tăng 1.88× so với tác tử không phòng thủ.
 
 ### 5.2. Fides-NOVA: Lập Kế Hoạch Phản Ứng Từng Bước Với Che Giấu Nới Lỏng
 * **Bế tắc của Fides nguyên bản:** Trong thiết kế Fides gốc (Costa et al., 2025), mọi giá trị môi trường đều bị bôi đen (redacted) hoàn toàn đối với Planner. Trên CUA, nếu Planner không biết thao tác vừa rồi thành công hay thất bại, nó không thể quyết định bước tiếp theo, khiến tiện ích sụp đổ.
 * **Giải pháp Fides-NOVA:** Nhóm tác giả nới lỏng cơ chế redaction, **cho phép Planner đọc các biến boolean (True/False)** trả về từ hàm `verify_hypothesis`.
-* **Cái giá phải trả:** Để tránh kẻ tấn công trích xuất thông tin bí mật qua kênh phụ bằng cách đặt hàng trăm câu hỏi nhị phân (Binary Search Leakage), Fides-NOVA buộc phải đặt các chốt chặn cứng (`max_steps=15`, `max_turn=70`). Nghiêm trọng hơn, việc gọi lại P-LLM kèm toàn bộ lịch sử hội thoại sau mỗi bước khiến lượng token bùng nổ lên tới **$29.6\times$** và chi phí tăng vọt lên **$76.07** cho 17 tác vụ.
+* **Cái giá phải trả:** Để tránh kẻ tấn công trích xuất thông tin bí mật qua kênh phụ bằng cách đặt hàng trăm câu hỏi nhị phân (Binary Search Leakage), Fides-NOVA buộc phải đặt các chốt chặn cứng (`max_steps=15`, `max_turn=70`). Nghiêm trọng hơn, việc gọi lại P-LLM kèm toàn bộ lịch sử hội thoại sau mỗi bước khiến lượng token bùng nổ lên tới **29.6×** và chi phí tăng vọt lên **76.07 USD** cho 17 tác vụ.
 
 ---
 
@@ -218,7 +220,9 @@ Một trong những đóng góp lý thuyết quan trọng của bài báo là ch
 ### 6.1. Định Nghĩa Đồ Thị Luồng Điều Khiển (Control Flow Graph - CFG)
 Gọi kế hoạch thực thi $\Pi$ do Privileged Planner sinh ra là một chương trình có cấu trúc AST. Ta mô hình hóa $\Pi$ dưới dạng một Đồ thị Luồng Điều khiển có hướng:
 
-$$G_{\Pi} = (V, E, v_0, V_{\text{term}})$$
+$$
+G_{\Pi} = (V, E, v_0, V_{\text{term}})
+$$
 
 Trong đó:
 - $V = V_{\text{act}} \cup V_{\text{obs}} \cup V_{\text{eval}}$ là tập hợp các nút thực thi:
@@ -232,21 +236,30 @@ Trong đó:
 ### 6.2. Tính Bất Biến Luồng Điều Khiển Dưới CaMeL-NOVA
 Tại thời điểm biên dịch kế hoạch ($t = 0$), đồ thị $G_{\Pi}$ được đóng kín và đóng băng hoàn toàn trong TCB Interpreter:
 
-$$\text{Frozen}(G_{\Pi}) \implies \forall t > 0, \quad V(t) \equiv V(0) \quad \land \quad E(t) \equiv E(0)$$
+$$
+\text{Frozen}(G_{\Pi}) \implies \forall t > 0, \quad V(t) \equiv V(0) \quad \land \quad E(t) \equiv E(0)
+$$
 
 Tại mỗi bước runtime $t$, con trỏ lệnh của bộ thông dịch $\sigma_t \in V$ chuyển tiếp theo quy tắc xác định:
 
-$$\sigma_{t+1} = \delta(\sigma_t, \text{EnvState}_t)$$
+$$
+\sigma_{t+1} = \delta(\sigma_t, \text{EnvState}_t)
+$$
 
 Với:
-$$\delta(\sigma_t, \cdot) \in \{ v' \mid (\sigma_t, v') \in E \}$$
+
+$$
+\delta(\sigma_t, \cdot) \in \{ v' \mid (\sigma_t, v') \in E \}
+$$
 
 ### 6.3. Định Lý Triệt Tiêu Tiêm Lệnh Tùy Ý (Arbitrary Injection Elimination)
 
 > **Định Lý (Control Flow Confinement):**  
 > Giả sử kẻ tấn công kiểm soát toàn bộ dữ liệu môi trường $\mathcal{I}_{\text{env}}$ tại bước $t$. Dưới kiến trúc CaMeL-NOVA, xác suất kẻ tấn công thực thi thành công một chuỗi thao tác mới $A^* \notin G_{\Pi}$ là bằng $0$:
 >
-> $$\mathbb{P}\left(\exists t, \sigma_t \notin V \mid \mathcal{I}_{\text{env}}\right) = 0 \implies \text{ASR}_{\text{arbitrary}} = 0.0\%$$
+> $$
+> \mathbb{P}\left(\exists t, \sigma_t \notin V \mid \mathcal{I}_{\text{env}}\right) = 0 \implies \text{ASR}_{\text{arbitrary}} = 0.0\%
+> $$
 
 **Chứng minh ngắn gọn:**
 1. Bộ thông dịch (Interpreter) là một máy trạng thái tất định chỉ thực thi các nút đã được định nghĩa trước trong AST tại $t = 0$.

@@ -211,21 +211,16 @@ Kết quả trả về của `verify_hypothesis` bắt buộc phải tuân thủ
 
 Trong kiến trúc của CaMeL-CUA, các hành động không được sinh trực tiếp dưới dạng tọa độ trần mà trải qua quá trình tổng hợp ngữ nghĩa 2 bước:
 
-$$\text{Instruction (Ngôn ngữ tự nhiên)} \xrightarrow{\text{find()}} \text{Điểm Neo } [x, y] \xrightarrow{\text{OS Shim}} \text{Sự kiện Phần cứng}$$
+$$
+\text{Instruction (Ngôn ngữ tự nhiên)} \xrightarrow{\text{find()}} \text{Điểm Neo } [x, y] \xrightarrow{\text{OS Shim}} \text{Sự kiện Phần cứng}
+$$
 
-```
-+----------------------------------------------------------------------------------------------------+
-|                                    QUY TRÌNH ÁNH XẠ HÀNH ĐỘNG                                      |
-+----------------------------------------------------------------------------------------------------+
-| Thao Tác Ngữ Nghĩa Trong Kế Hoạch        | Thẩm Định Định Vị (Grounding) | Nguyên Thủy OS Được Kích Hoạt  |
-+------------------------------------------+-------------------------------+--------------------------------+
-| Nhấp vào nút "Accept all cookies"        | `find("accept all cookies")`  | `left_single([x=420, y=780])`  |
-| Nhập từ khóa vào thanh tìm kiếm          | `find("search input box")`    | `left_single([x, y])`          |
-|                                          |                               | `type_text("query\n")`         |
-| Mở thanh địa chỉ trình duyệt             | Không cần định vị ảnh         | `hotkey([Key.CTRL, Key.L])`    |
-| Cuộn xuống xem kết quả tiếp theo         | Định vị vùng nội dung chính   | `scroll("down", [x=500, y=500])`|
-+----------------------------------------------------------------------------------------------------+
-```
+| Thao Tác Ngữ Nghĩa Trong Kế Hoạch | Thẩm Định Định Vị (Grounding) | Nguyên Thủy OS Được Kích Hoạt |
+| :--- | :--- | :--- |
+| **Nhấp vào nút "Accept all cookies"** | `find("accept all cookies")` | `left_single([x=420, y=780])` |
+| **Nhập từ khóa vào thanh tìm kiếm** | `find("search input box")` | `left_single([x, y])`<br>`type_text("query\n")` |
+| **Mở thanh địa chỉ trình duyệt** | Không cần định vị ảnh | `hotkey([Key.CTRL, Key.L])` |
+| **Cuộn xuống xem kết quả tiếp theo** | Định vị vùng nội dung chính | `scroll("down", [x=500, y=500])` |
 
 ### 4.1. Quy Tắc Biên & Cơ Chế Dự Phòng Của `find()`
 * **Quy tắc biên an toàn:** Nếu mô hình thị giác không tìm thấy phần tử được yêu cầu, hàm `find()` **bắt buộc phải gán `start = None` và trả về `status = "FAIL"`**. Hệ thống tuyệt đối cấm suy đoán tọa độ bừa bãi khi không chắc chắn.
@@ -247,7 +242,10 @@ $$\text{Instruction (Ngôn ngữ tự nhiên)} \xrightarrow{\text{find()}} \text
 Khi mô hình Q-VLM (như UI-TARS) thực thi hàm `find()`, nó sinh ra đồng thời hai thành phần: tọa độ $[x, y]$ và vết suy luận nội tâm (**Thought Trace**).
 
 Hệ thống tự động kích hoạt hàm kiểm tra chéo:
-$$\texttt{compare\_instruction\_vs\_thought}(\text{Instruction}, \text{Thought})$$
+
+$$
+\texttt{compare\_instruction\_vs\_thought}(\text{Instruction}, \, \text{Thought})
+$$
 
 - **Mục tiêu:** Phát hiện hiện tượng "nghĩ một đằng làm một nẻo".
 - **Ví dụ phát hiện:** Nếu chỉ thị yêu cầu tìm *"Nút chấp nhận Cookie"*, nhưng Thought của VLM lại ghi: *"Tôi thấy một nút tải xuống phần mềm hấp dẫn và tôi sẽ bấm vào đó"*, bộ kiểm tra lập tức phát hiện sự lệch pha ngữ nghĩa.
@@ -256,7 +254,9 @@ $$\texttt{compare\_instruction\_vs\_thought}(\text{Instruction}, \text{Thought})
 ### 5.2. Bất Biến Biến Đổi Trạng Thái (State Transition Delta Invariant)
 Sau khi một thao tác chuột hoặc phím được phát xuống hệ điều hành, hệ thống chụp lại màn hình mới $I_{t+1}$ và so sánh ma trận pixel với màn hình trước đó $I_t$:
 
-$$\Delta(I_t, I_{t+1}) = \| I_{t+1} - I_t \|_{\text{diff}}$$
+$$
+\Delta(I_t, I_{t+1}) = \| I_{t+1} - I_t \|_{\text{diff}}
+$$
 
 * Nếu $\Delta = 0$ (màn hình hoàn toàn không có bất kỳ thay đổi nào sau cú click):
   - Thao tác được xác định là **không hiệu quả** (click trượt vào vùng trống hoặc nút bấm bị vô hiệu hóa).

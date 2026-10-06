@@ -108,31 +108,23 @@ Dưới CaMeL-NOVA:
 
 Nỗi lo lớn nhất của cộng đồng nghiên cứu khi áp dụng bảo mật phân lập hệ thống là sự suy giảm tiện ích (Utility Degradation). Kết quả thực nghiệm của Debenedetti et al. đã đập tan định kiến này:
 
-```
-+----------------------------------------------------------------------------------------------------------------------+
-|                               HIỆU NĂNG TIỆN ÍCH TRÊN CÁC TẬP TÁC VỤ OSWORLD (BẢNG 2)                                |
-+----------------------------------------------------------------------------------------------------------------------+
-| Cấu Hình Tác Tử & Kế Hoạch     | Tập Tác Vụ Đánh Giá       | Pass@1    | Pass@2    | Pass@3    | Pass@5    | Overall     |
-+--------------------------------+---------------------------+-----------+-----------+-----------+-----------+-------------+
-| **UITars† (Chưa tối ưu)**      | UITars Tasks (60)         | 6.7%      | 13.3%     | 18.3%     | -         | 18.3%       |
-| **UITars + CaMeL-NOVA**        | UITars Tasks (60)         | 41.7%     | 50.0%     | 58.3%     | **65.0%** | **65.0%**   |
-| **OpenCUA + CaMeL-NOVA**       | UITars Tasks (60)         | 36.7%     | 48.3%     | 58.3%     | **66.7%** | **66.7%**   |
-| **Claude + CaMeL-NOVA**        | UITars Tasks (60)         | 38.3%     | 50.0%     | 55.0%     | **68.3%** | **68.3%**   |
-+--------------------------------+---------------------------+-----------+-----------+-----------+-----------+-------------+
-| **OpenCUA + CaMeL-NOVA**       | OpenCUA Tasks (76)        | 28.9%     | 42.1%     | 48.7%     | **63.2%** | **63.2%**   |
-| **Claude + CaMeL-NOVA**        | Claude Tasks (109)        | 28.4%     | 42.2%     | 52.3%     | **56.9%** | **56.9%**   |
-+--------------------------------+---------------------------+-----------+-----------+-----------+-----------+-------------+
-| **UITars + CaMeL-NOVA**        | Tất cả 339 tác vụ khả thi | 15.0%     | 20.6%     | **22.7%** | -         | **22.7%**   |
-| **UITars + CaMeL-NOVA**        | Tất cả 369 tác vụ (+auto) | -         | -         | -         | -         | **29.0%**   |
-+----------------------------------------------------------------------------------------------------------------------+
-```
+| Cấu Hình Tác Tử & Kế Hoạch | Tập Tác Vụ Đánh Giá | Pass@1 | Pass@2 | Pass@3 | Pass@5 | Overall |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| **UITars† (Chưa tối ưu)** | UITars Tasks (60) | 6.7% | 13.3% | 18.3% | - | 18.3% |
+| **UITars + CaMeL-NOVA** | UITars Tasks (60) | 41.7% | 50.0% | 58.3% | **65.0%** | **65.0%** |
+| **OpenCUA + CaMeL-NOVA** | UITars Tasks (60) | 36.7% | 48.3% | 58.3% | **66.7%** | **66.7%** |
+| **Claude + CaMeL-NOVA** | UITars Tasks (60) | 38.3% | 50.0% | 55.0% | **68.3%** | **68.3%** |
+| **OpenCUA + CaMeL-NOVA** | OpenCUA Tasks (76) | 28.9% | 42.1% | 48.7% | **63.2%** | **63.2%** |
+| **Claude + CaMeL-NOVA** | Claude Tasks (109) | 28.4% | 42.2% | 52.3% | **56.9%** | **56.9%** |
+| **UITars + CaMeL-NOVA** | Tất cả 339 tác vụ khả thi | 15.0% | 20.6% | **22.7%** | - | **22.7%** |
+| **UITars + CaMeL-NOVA** | Tất cả 369 tác vụ (+auto) | - | - | - | - | **29.0%** |
 
 ### 4.1. Phân Tích Tỷ Lệ Hoàn Thành Nhiệm Vụ
 1. **Mô Hình Mã Nguồn Mở Vượt Trội Nhờ Planner Mạnh:**
    - Trên tập 60 tác vụ của UITars, tác tử UI-TARS-1.5-7B khi kết hợp với kế hoạch CaMeL-NOVA đạt tỷ lệ thành công ấn tượng **65.0% ở Pass@5**.
-   - Con số này **vượt xa baseline unisolated gốc** ($24.4\%$). Nguyên nhân là UI-TARS vốn có năng lực lập luận yếu nhưng định vị thị giác tốt; khi được dẫn dắt bởi một kế hoạch phân nhánh xuất sắc từ GPT-5, hiệu năng tổng thể của nó tăng vọt.
+   - Con số này **vượt xa baseline unisolated gốc** (24.4%). Nguyên nhân là UI-TARS vốn có năng lực lập luận yếu nhưng định vị thị giác tốt; khi được dẫn dắt bởi một kế hoạch phân nhánh xuất sắc từ GPT-5, hiệu năng tổng thể của nó tăng vọt.
 2. **Khả Năng Bảo Toàn Baseline Gốc:**
-   - Trên toàn bộ 339 tác vụ khả thi của OSWorld, UI-TARS + CaMeL-NOVA đạt **22.7% ở Pass@3**. So với mức baseline gốc là $24.5\%$, hệ thống **bảo toàn tới 93% tiện ích ban đầu** trong khi mang lại sự an toàn tuyệt đối trước Command Injection.
+   - Trên toàn bộ 339 tác vụ khả thi của OSWorld, UI-TARS + CaMeL-NOVA đạt **22.7% ở Pass@3**. So với mức baseline gốc là 24.5%, hệ thống **bảo toàn tới 93% tiện ích ban đầu** trong khi mang lại sự an toàn tuyệt đối trước Command Injection.
 3. **Mở Rộng Tiện Ích Với Claude Sonnet 4.5 (Scaling to Pass@20):**
    - Đối với Claude Sonnet 4.5, tại 15 bước, mô hình đạt **56.9% ở Pass@5** trên 109 tác vụ.
    - Nhờ đặc tính sinh kế hoạch song song độc lập (unconditional sampling), khi tăng số lần lấy mẫu lên $k=20$, tỷ lệ thành công tăng vọt lên xấp xỉ **73%** (Hình 6 bài báo), thu hẹp hoàn toàn khoảng cách với các tác tử tương tác tự do.
@@ -143,34 +135,28 @@ Nỗi lo lớn nhất của cộng đồng nghiên cứu khi áp dụng bảo m�
 
 Để hệ thống phòng thủ có thể ứng dụng thực tế trong doanh nghiệp, chi phí tính toán (Token Overhead & Latency) là yếu tố mang tính quyết định.
 
-```
-+----------------------------------------------------------------------------------------------------------------------+
-|                               SO SÁNH TIÊU THỤ TOKEN VÀ CHI PHÍ TRÊN 17 TÁC VỤ OSWORLD                               |
-+----------------------------------------------------------------------------------------------------------------------+
-| Cấu Hình Phòng Thủ             | Input Tokens    | Output Tokens  | Hệ Số Tăng Token | Chi Phí API ($) | Đánh Giá    |
-+--------------------------------+-----------------+----------------+------------------+-----------------+-------------+
-| **Không phòng thủ (Baseline)** | 1,797,736       | 13,120         | $1.0\times$      | $0.00 (Local)   | Cơ sở       |
-| **CaMeL-NOVA**                 | 2,950,253       | 456,105        | **$1.88\times$** | **$5.40**       | Cực kỳ tối ưu|
-| **Fides-NOVA**                 | 51,724,263      | 1,874,795      | **$29.6\times$** | **$76.07$**     | Bùng nổ nặng|
-| **CaMeL + DOM Consistency**    | 8,437,603       | 605,656        | $5.00\times$     | $11.57$         | Trung bình  |
-| **CaMeL + Multi-Modal Cons.**  | 10,926,601      | 982,484        | **$6.57\times$** | **$18.37$**     | Rất đắt     |
-+----------------------------------------------------------------------------------------------------------------------+
-```
+| Cấu Hình Phòng Thủ | Input Tokens | Output Tokens | Hệ Số Tăng Token | Chi Phí API (USD) | Đánh Giá |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **Không phòng thủ (Baseline)** | 1,797,736 | 13,120 | 1.0× | 0.00 *(Local)* | Cơ sở |
+| **CaMeL-NOVA** | 2,950,253 | 456,105 | **1.88×** | **5.40 USD** | Cực kỳ tối ưu |
+| **Fides-NOVA** | 51,724,263 | 1,874,795 | **29.6×** | **76.07 USD** | Bùng nổ nặng |
+| **CaMeL + DOM Consistency** | 8,437,603 | 605,656 | 5.00× | 11.57 USD | Trung bình |
+| **CaMeL + Multi-Modal Cons.** | 10,926,601 | 982,484 | **6.57×** | **18.37 USD** | Rất đắt |
 
-### 5.1. CaMeL-NOVA vs. Fides-NOVA: Chênh Lệch $15\times$ Chi Phí
-* Cả hai hệ thống đạt mức tiện ích tương đương nhau trên 60 tác vụ ($65.0\%$ cho CaMeL vs $66.7\%$ cho Fides).
-* Tuy nhiên, Fides-NOVA tiêu tốn tới **51.7 triệu tokens** và **$76.07 chi phí API**, cao gấp **$15.7\times$** so với CaMeL-NOVA ($5.40).
+### 5.1. CaMeL-NOVA vs. Fides-NOVA: Chênh Lệch 15× Chi Phí
+* Cả hai hệ thống đạt mức tiện ích tương đương nhau trên 60 tác vụ (65.0% cho CaMeL vs 66.7% cho Fides).
+* Tuy nhiên, Fides-NOVA tiêu tốn tới **51.7 triệu tokens** và **76.07 USD chi phí API**, cao gấp **15.7×** so với CaMeL-NOVA (5.40 USD).
 * **Nguyên nhân cốt lõi:**  
   Fides phải gọi lại Planner sau mỗi thao tác GUI. Mỗi lần gọi lại, nó phải nạp lại toàn bộ lịch sử hội thoại, các biến che giấu và system prompt dài. Ngược lại, CaMeL chỉ gọi Planner đúng một lần duy nhất tại $t=0$, toàn bộ các bước sau do máy ảo Interpreter cục bộ điều phối mà không tốn thêm token của Planner.
 
 ### 5.2. Phân Bổ Chi Phí Từng Thành Phần Trong CaMeL-NOVA
-Trong tổng chi phí $5.40 của CaMeL-NOVA trên 17 tác vụ:
-- **Planner (GPT-5):** Tiêu thụ 618k input tokens và 313k output tokens, chiếm **$3.90 (72.2%)**. Đây là khoản đầu tư xứng đáng để có một đồ thị AST 200+ dòng đầy đủ nhánh dự phòng.
-- **Q-VLM Functions (UI-TARS):** Tiêu thụ 2.3 triệu input tokens và 133k output tokens, chỉ chiếm **$1.50 (27.8%)**.
+Trong tổng chi phí 5.40 USD của CaMeL-NOVA trên 17 tác vụ:
+- **Planner (GPT-5):** Tiêu thụ 618k input tokens và 313k output tokens, chiếm **3.90 USD (72.2%)**. Đây là khoản đầu tư xứng đáng để có một đồ thị AST 200+ dòng đầy đủ nhánh dự phòng.
+- **Q-VLM Functions (UI-TARS):** Tiêu thụ 2.3 triệu input tokens và 133k output tokens, chỉ chiếm **1.50 USD (27.8%)**.
 
 Khi bật thêm tầng thẩm định dự phòng:
-- **DOM Consistency (Claude Haiku 4.5):** Tăng thêm $6.17 chi phí do kích thước chuỗi cây DOM của các website hiện đại rất dài.
-- **Multi-Modal Consensus (GPT-5):** Làm chi phí tăng thêm $12.97 do phải liên tục gọi mô hình thương mại đắt đỏ để kiểm tra từng ảnh chụp màn hình.
+- **DOM Consistency (Claude Haiku 4.5):** Tăng thêm 6.17 USD chi phí do kích thước chuỗi cây DOM của các website hiện đại rất dài.
+- **Multi-Modal Consensus (GPT-5):** Làm chi phí tăng thêm 12.97 USD do phải liên tục gọi mô hình thương mại đắt đỏ để kiểm tra từng ảnh chụp màn hình.
 
 ---
 

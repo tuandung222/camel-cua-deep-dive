@@ -55,41 +55,38 @@ Khác với các tác tử API dạng văn bản, Computer Use Agents sở hữu
 ### 2.1. Sự Mập Mờ Ngữ Nghĩa của Công Cụ CUA (Semantic Ambiguity)
 Trong các tác tử văn bản truyền thống (Text-based Tool Agents), các công cụ được định nghĩa bằng các hàm API có kiểu dữ liệu tường minh (Typed Tool APIs):
 
-$$\text{Tool}_{\text{text}} = \texttt{send\_email}(\text{to: EmailAddress, subject: String, body: String})$$
+$$
+\text{Tool}_{\text{text}} = \texttt{send\_email}(\text{to} \colon \text{EmailAddress}, \, \text{subject} \colon \text{String}, \, \text{body} \colon \text{String})
+$$
 
 Hàm `send_email` mang **ngữ nghĩa nội tại bất biến (intrinsic semantics)**. Bất kể ngữ cảnh xung quanh là gì, việc gọi hàm này đồng nghĩa với việc gửi dữ liệu ra bên ngoài. Do đó, người quản trị bảo mật có thể thiết lập các chính sách kiểm soát luồng dữ liệu tĩnh (Static Data-Flow Policies):
 - *"Nếu tham số `body` chứa dữ liệu đọc từ tài liệu bí mật, cấm truyền địa chỉ ngoài tổ chức vào tham số `to`."*
 
 Ngược lại, trong không gian CUA, công cụ tương tác cốt lõi chỉ là các nguyên thủy vật lý cấp thấp:
 
-$$\text{Tool}_{\text{CUA}} = \texttt{click}(x \in [0, W], y \in [0, H])$$
+$$
+\text{Tool}_{\text{CUA}} = \texttt{click}(x \in [0, W], \, y \in [0, H])
+$$
 
 Bản thân lệnh $\texttt{click}(x, y)$ **hoàn toàn vô nghĩa về mặt ngữ nghĩa nếu tách rời trạng thái môi trường trực quan hiển thị tại tọa độ $(x, y)$ tại đúng thời điểm $t$**:
 - Nếu tại $(x, y)$ là nút *"Chấp nhận Cookie"*, hành động mang tính tiện ích lành tính.
 - Nếu tại $(x, y)$ là nút *"Xác nhận chuyển 10,000 USD"* hoặc *"Format ổ đĩa"*, hành động gây thiệt hại nghiêm trọng.
 - Nếu tại $(x, y)$ là một banner quảng cáo độc hại ngụy trang giao diện hộp thoại hệ thống, hành động sẽ kích hoạt mã độc hoặc chuyển hướng trình duyệt.
 
-```
-+-----------------------------------------------------------------------------------------+
-|                                    SO SÁNH BẢN CHẤT CÔNG CỤ                             |
-+-----------------------------------------------------------------------------------------+
-|  Đặc Tính                  | Text-Based Tool Agent        | Computer Use Agent (CUA)    |
-+----------------------------+------------------------------+-----------------------------+
-|  Không gian công cụ        | Đóng, định kiểu chặt chẽ     | Mở, ngữ nghĩa mập mờ        |
-|                            | (e.g., `send_email()`)       | (e.g., `click(x, y)`)        |
-|  Không gian tham số        | Chuỗi định dạng, Schema JSON | Tọa độ pixel liên tục       |
-|  Ý nghĩa hành động         | Tự thân hành động có nghĩa   | Phụ thuộc 100% vào phần tử  |
-|                            |                              | trực quan tại (x, y) lúc t  |
-|  Chính sách kiểm soát      | Dễ áp dụng chính sách dữ liệu| Không thể áp đặt chính sách |
-|                            | (Data-flow policy)           | ngữ nghĩa tĩnh              |
-|  Phản hồi môi trường       | Chuỗi văn bản/JSON có cấu trúc| Màn hình pixel, DOM động    |
-+-----------------------------------------------------------------------------------------+
-```
+| Đặc Tính | Text-Based Tool Agent | Computer Use Agent (CUA) |
+| :--- | :--- | :--- |
+| **Không gian công cụ** | Đóng, định kiểu chặt chẽ (e.g., `send_email()`) | Mở, ngữ nghĩa mập mờ (e.g., `click(x, y)`) |
+| **Không gian tham số** | Chuỗi định dạng, Schema JSON | Tọa độ pixel liên tục |
+| **Ý nghĩa hành động** | Tự thân hành động có nghĩa | Phụ thuộc 100% vào phần tử trực quan tại $(x, y)$ lúc $t$ |
+| **Chính sách kiểm soát** | Dễ áp dụng chính sách dữ liệu (Data-flow policy) | Không thể áp đặt chính sách ngữ nghĩa tĩnh |
+| **Phản hồi môi trường** | Chuỗi văn bản/JSON có cấu trúc | Màn hình pixel, DOM động |
 
 ### 2.2. Nghịch Lý Vòng Lặp Phản Hồi Trực Quan (The Visual Feedback Loop Paradox)
 Để tương tác được trên máy tính, CUA bắt buộc phải trải qua một vòng lặp quan sát liên tục:
 
-$$S_t \xrightarrow{\text{Chụp màn hình}} I_t \xrightarrow{\text{Đưa vào ngữ cảnh}} \text{VLM} \xrightarrow{\text{Suy luận}} A_t = \texttt{click}(x, y) \xrightarrow{\text{Tác động OS}} S_{t+1}$$
+$$
+S_t \xrightarrow{\text{Chụp màn hình}} I_t \xrightarrow{\text{Đưa vào ngữ cảnh}} \text{VLM} \xrightarrow{\text{Suy luận}} A_t = \texttt{click}(x, y) \xrightarrow{\text{Tác động OS}} S_{t+1}
+$$
 
 Nghịch lý bảo mật xuất hiện ở đây:
 1. **Để hoàn thành nhiệm vụ**, tác tử phải đưa ảnh chụp màn hình $I_t$ vào cửa sổ ngữ cảnh (Context Window) của VLM để xác định tọa độ các phần tử.
