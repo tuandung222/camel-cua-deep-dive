@@ -96,13 +96,13 @@ Transforming a reactive vision-action loop into an offline anticipatory executio
 
 | Plan Complexity Metric | CaMeL on AgentDojo<br>*(Typed Text APIs)* | Naive CUA Baseline<br>*(Unoptimized)* | **CaMeL-CUA-NOVA**<br>*(Anticipatory Framework)* | Growth / Impact |
 | :--- | :---: | :---: | :---: | :---: |
-| **Tool Calls per Plan** | $4.9 \pm 0.4$ | $19.8 \pm 1.7$ | **$41.1 \pm 1.6$** | **+738% increase** |
-| **Lines of Code (LOC)** | $51.8 \pm 6.9$ | $71.6 \pm 3.7$ | **$213.3 \pm 7.5$** | **+311% increase** |
-| **Total Conditional Branches** | $3.7 \pm 0.5$ | $11.3 \pm 0.8$ | **$39.7 \pm 1.7$** | **+972% increase** |
-| **Sequential Control Edges** | $4.6 \pm 0.6$ | $30.7 \pm 3.7$ | **$130.6 \pm 8.3$** | High structural density |
-| **Data-Flow Dependencies** | $1.2 \pm 0.3$ | $9.1 \pm 3.1$ | **$21.4 \pm 1.0$** | High variable reuse |
-| **Untaken Fallback Paths** | $< 10\%$ | $\sim 25\%$ | **$\sim 50\%$** | Heavy contingency netting |
-| **Jaccard Diversity Index** | $0.393$ | $0.001$ | **$0.044$** | Diverse task specialization |
+| **Tool Calls per Plan** | 4.9 ± 0.4 | 19.8 ± 1.7 | **41.1 ± 1.6** | **+738% increase** |
+| **Lines of Code (LOC)** | 51.8 ± 6.9 | 71.6 ± 3.7 | **213.3 ± 7.5** | **+311% increase** |
+| **Total Conditional Branches** | 3.7 ± 0.5 | 11.3 ± 0.8 | **39.7 ± 1.7** | **+972% increase** |
+| **Sequential Control Edges** | 4.6 ± 0.6 | 30.7 ± 3.7 | **130.6 ± 8.3** | High structural density |
+| **Data-Flow Dependencies** | 1.2 ± 0.3 | 9.1 ± 3.1 | **21.4 ± 1.0** | High variable reuse |
+| **Untaken Fallback Paths** | < 10% | ~25% | **~50%** | Heavy contingency netting |
+| **Jaccard Diversity Index** | 0.393 | 0.001 | **0.044** | Diverse task specialization |
 
 In a typical successful run, approximately **50% of the nodes in the generated AST are never executed**. These untaken branches serve as anticipatory safety nets—handling unexpected cookie popups, alternative navigation menus, and DOM fallback locators.
 

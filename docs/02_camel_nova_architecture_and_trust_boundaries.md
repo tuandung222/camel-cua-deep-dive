@@ -161,23 +161,16 @@ Tuy nhiên, khi nhóm tác giả áp dụng nguyên mẫu Dual-LLM lên Computer
 ### 4.2. Định Lượng Khoảng Cách Độ Phức Tạp Kế Hoạch (Table 3 Trong Bài Báo)
 Để chứng minh sự khác biệt bản chất này, Debenedetti et al. thực hiện phân tích tĩnh trên Đồ thị Có hướng Không chu trình (DAG) trích xuất từ hàng trăm kế hoạch thực tế:
 
-```
-+----------------------------------------------------------------------------------------------------+
-|           KHOẢNG CÁCH ĐỘ PHỨC TẠP KẾ HOẠCH: AGENTDOJO VS. CUA (TABLE 3 TRONG BÀI BÁO GỐC)          |
-+----------------------------------------------------------------------------------------------------+
-| Chỉ Số Cấu Trúc Kế Hoạch         | CaMeL trên AgentDojo  | CaMeL-CUA Chưa Tối Ưu | CaMeL-CUA-NOVA          |
-|                                  | (Typed Tool APIs)     | (Naive Baseline)      | (Khung Giàn Chuẩn Hóa)  |
-+----------------------------------+-----------------------+-----------------------+-------------------------+
-| Số lượng gọi công cụ (Tool Calls)| $4.9 \pm 0.4$         | $19.8 \pm 1.7$        | **$41.1 \pm 1.6$**      |
-| Số dòng mã lệnh (Code Lines)     | $51.8 \pm 6.9$        | $71.6 \pm 3.7$        | **$213.3 \pm 7.5$**     |
-| Tổng số nhánh rẽ (All Branches)  | $3.7 \pm 0.5$         | $11.3 \pm 0.8$        | **$39.7 \pm 1.7$**      |
-| Cạnh tuần tự (Sequential Edges)  | $4.6 \pm 0.6$         | $30.7 \pm 3.7$        | **$130.6 \pm 8.3$**     |
-| Cạnh luồng dữ liệu (Data Edges)  | $1.2 \pm 0.3$         | $9.1 \pm 3.1$         | **$21.4 \pm 1.0$**      |
-| Nhánh phụ thuộc LLM/VLM          | $20.6\%$              | $68.4\%$              | **$89.2\%$**            |
-| Độ tương đồng Jaccard (Diversity)| **0.393**             | 0.001                 | **0.044**               |
-| Tỷ lệ nút dự phòng (Fallback)    | $< 10\%$              | $\sim 25\%$           | **$\sim 50\%$**         |
-+----------------------------------------------------------------------------------------------------+
-```
+| Chỉ Số Cấu Trúc Kế Hoạch | CaMeL trên AgentDojo<br>*(Typed Tool APIs)* | CaMeL-CUA Chưa Tối Ưu<br>*(Naive Baseline)* | **CaMeL-CUA-NOVA**<br>*(Khung Giàn Chuẩn Hóa)* |
+| :--- | :---: | :---: | :---: |
+| **Số lượng gọi công cụ (Tool Calls)** | 4.9 ± 0.4 | 19.8 ± 1.7 | **41.1 ± 1.6** |
+| **Số dòng mã lệnh (Code Lines)** | 51.8 ± 6.9 | 71.6 ± 3.7 | **213.3 ± 7.5** |
+| **Tổng số nhánh rẽ (All Branches)** | 3.7 ± 0.5 | 11.3 ± 0.8 | **39.7 ± 1.7** |
+| **Cạnh tuần tự (Sequential Edges)** | 4.6 ± 0.6 | 30.7 ± 3.7 | **130.6 ± 8.3** |
+| **Cạnh luồng dữ liệu (Data Edges)** | 1.2 ± 0.3 | 9.1 ± 3.1 | **21.4 ± 1.0** |
+| **Nhánh phụ thuộc LLM/VLM** | 20.6% | 68.4% | **89.2%** |
+| **Độ tương đồng Jaccard (Diversity)** | **0.393** | 0.001 | **0.044** |
+| **Tỷ lệ nút dự phòng (Fallback)** | < 10% | ~25% | **~50%** |
 
 ### 4.3. Phân Tích Bản Chất Kỹ Thuật
 1. **Sự bùng nổ quy mô (+738% Tool Calls, +972% Branches):**
@@ -193,26 +186,17 @@ Tuy nhiên, khi nhóm tác giả áp dụng nguyên mẫu Dual-LLM lên Computer
 
 Trong nghiên cứu, nhóm tác giả hiện thực hóa nguyên lý Dual-LLM trên CUA theo hai triết lý triển khai đối lập:
 
-```
-+----------------------------------------------------------------------------------------------------+
-|                                    SO SÁNH HAI TRIẾT LÝ DUAL-LLM TRÊN CUA                          |
-+----------------------------------------------------------------------------------------------------+
-| Đặc Tính                    | CaMeL-NOVA (Single-Shot Planning)   | Fides-NOVA (Reactive Planning) |
-+-----------------------------+-------------------------------------+--------------------------------+
-| Thời điểm sinh kế hoạch     | Một lần duy nhất tại $t = 0$        | Sinh từng bước tuần tự mỗi turn|
-| Mô hình lập kế hoạch        | Tĩnh, phân nhánh hoàn chỉnh (AST)   | Tương tác phản ứng (Step-wise) |
-| Mức độ che giấu biến        | Che giấu tuyệt đối 100%             | Nới lỏng (Relaxed Redaction):   |
-|                             | (P-LLM không nhìn thấy gì)          | P-LLM được đọc biến boolean    |
-| Khả năng bảo vệ CFI         | **Tuyệt đối (Bảo đảm hình thức)**   | **Rất cao (Bảo đảm tuần tự)**  |
-| Nguy cơ rò rỉ kênh phụ      | Không có                            | Có nguy cơ (qua chuỗi câu hỏi  |
-|                             |                                     | nhị phân nếu không giới hạn)   |
-| Ràng buộc an ninh bắt buộc   | Không cần (kế hoạch đã đóng)        | `max_steps=15, max_turn=70,`   |
-|                             |                                     | `max_variable_reuse=5`         |
-| Tiêu thụ tài nguyên         | **1.88x Token** (Rất tiết kiệm)     | **29.6x Token** (Bùng nổ nặng) |
-| Chi phí API trên 17 tasks   | **$5.40**                           | **$76.07** (Đắt gấp 14 lần)    |
-| Tiện ích OSWorld (Pass@5)   | **65.0%**                           | **66.7%** (Tương đương nhau)   |
-+----------------------------------------------------------------------------------------------------+
-```
+| Đặc Tính | CaMeL-NOVA (Single-Shot Planning) | Fides-NOVA (Reactive Planning) |
+| :--- | :--- | :--- |
+| **Thời điểm sinh kế hoạch** | Một lần duy nhất tại $t = 0$ | Sinh từng bước tuần tự mỗi turn |
+| **Mô hình lập kế hoạch** | Tĩnh, phân nhánh hoàn chỉnh (AST) | Tương tác phản ứng (Step-wise) |
+| **Mức độ che giấu biến** | Che giấu tuyệt đối 100%<br>*(P-LLM không nhìn thấy gì)* | Nới lỏng (Relaxed Redaction):<br>P-LLM được đọc biến boolean |
+| **Khả năng bảo vệ CFI** | **Tuyệt đối (Bảo đảm hình thức)** | **Rất cao (Bảo đảm tuần tự)** |
+| **Nguy cơ rò rỉ kênh phụ** | Không có | Có nguy cơ (qua chuỗi câu hỏi nhị phân nếu không giới hạn) |
+| **Ràng buộc an ninh bắt buộc** | Không cần (kế hoạch đã đóng) | `max_steps=15, max_turn=70,`<br>`max_variable_reuse=5` |
+| **Tiêu thụ tài nguyên** | **1.88x Token** (Rất tiết kiệm) | **29.6x Token** (Bùng nổ nặng) |
+| **Chi phí API trên 17 tasks** | **$5.40** | **$76.07** (Đắt gấp 14 lần) |
+| **Tiện ích OSWorld (Pass@5)** | **65.0%** | **66.7%** (Tương đương nhau) |
 
 ### 5.1. CaMeL-NOVA: Lập Kế Hoạch Tĩnh Một Lượt (Single-Shot AST Planning)
 * **Cơ chế:** P-LLM suy luận toàn bộ cây khả năng và phát ra file mã nguồn Python hoàn chỉnh. Trình thông dịch (Interpreter) đóng vai trò người thi hành tuyệt đối trung thành.
